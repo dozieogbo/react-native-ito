@@ -20,7 +20,7 @@ import static org.itoapp.strict.Helper.encodeHexString;
 public class NetworkHelper {
 
     private static final String LOG_TAG = "InfectedUUIDRepository";
-    private static final String BASE_URL = "http://compass.curacel.co:5000";
+    private static final String BASE_URL = " https://ito.dev.compass.curacel.co";
 
     public static void refreshInfectedUUIDs(ItoDBHelper dbHelper) {
         byte[] lastInfectedUUID = dbHelper.selectRandomLastUUID();
@@ -59,15 +59,21 @@ public class NetworkHelper {
             OutputStream outputStream = new BufferedOutputStream(urlConnection.getOutputStream());
             for(byte[] beacon: beacons) {
                 outputStream.write(beacon);
+                
+                Log.d(LOG_TAG, "Beacon: " + new String(beacon));
             }
             outputStream.close();
 
             InputStream inputStream = urlConnection.getInputStream();
             inputStream.read();
             inputStream.close();
+            Log.d(LOG_TAG, "UUIDs published");
         } catch (MalformedURLException e) {
             Log.wtf(LOG_TAG, "Malformed URL?!", e);
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getMessage());
+            e.printStackTrace();
         } finally {
             if (urlConnection != null)
                 urlConnection.disconnect();
